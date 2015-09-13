@@ -3,18 +3,21 @@
 var redis= require('redis');
 var fs = require('fs');
 var app = require("http").createServer(handler);
-// app.listen(8000);
+
 
 var WebSocketServer = require("ws").Server;
 
-var the_port = process.env.PORT || 8080;
-var socket = new WebSocketServer({port:the_port});
+var the_port = process.env.PORT || 8000;
+app.listen(the_port);
+
+var socket = new WebSocketServer({port:8080});
 
 //console.log( "-- PORT(" + the_port +")" );
 
 socket.on('connection', function(connection) {
 	var client = undefined;
 	console.log("adfasdf");
+	
 	if ((typeof process !== 'undefined') &&  process.env.REDISTOGO_URL) {
 		var r = require("url").parse(process.env.REDISTOGO_URL);
 		client = require("redis").createClient(r.port, r.hostname);
@@ -23,7 +26,7 @@ socket.on('connection', function(connection) {
 		client = require("redis").createClient();
 	}
 	
-	client.set("socket-port",the_port,redis.print);	
+	client.set("socket-port",8080,redis.print);	
 	console.log("We have a client" + this.clients);
 
 	var a = this.clients;
