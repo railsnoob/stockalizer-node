@@ -2,7 +2,7 @@
 
 var redis= require('redis');
 var fs = require('fs');
-// var app = require("http").createServer(handler); // handler defined below
+var app = require("http").createServer(handler); 
 
 var WebSocketServer = require("ws").Server;
 var socket = new WebSocketServer({port:8080});
@@ -61,17 +61,17 @@ socket.on('connection', function(connection) {
 // var pub = redis.createClient();
 // var sub = redis.createClient();
 
-// function handler(req,res){
-//     fs.readFile(__dirname + '/index.html', function(err,data){
-//         if(err){
-//             res.writeHead(500);
-//             return res.end('Error loading index.html');
-//         }
-//         res.writeHead(200);
-//         console.log("Listening on port 8088");
-//         res.end(data);
-//     });
-// }
+function handler(req,res){
+    fs.readFile(__dirname + '/index.html', function(err,data){
+        if(err){
+            res.writeHead(500);
+            return res.end('Error loading index.html');
+        }
+        res.writeHead(200);
+        console.log("Listening on port 8088");
+        res.end(data);
+    });
+}
  
 // io.on('connection', function (client) {
 //     sub.subscribe("quote-added");
