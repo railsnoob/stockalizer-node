@@ -2,17 +2,15 @@
 
 var redis= require('redis');
 var fs = require('fs');
-var app = require("http").createServer(handler);
-
-
+var server = require("http").createServer(handler);
 var WebSocketServer = require("ws").Server;
 
-var the_port = process.env.PORT || 8000;
-app.listen(the_port);
+var the_port = process.env.PORT || 8080;
+server.listen(the_port);
 
-var socket = new WebSocketServer({port:8080});
+var socket = new WebSocketServer({server:server});
 
-//console.log( "-- PORT(" + the_port +")" );
+console.log( "-- PORT(" + the_port +")" );
 
 socket.on('connection', function(connection) {
 	var client = undefined;
