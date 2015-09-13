@@ -3,19 +3,19 @@
 var redis= require('redis');
 var fs = require('fs');
 var app = require("http").createServer(handler);
-app.listen(80);
+// app.listen(8000);
 
 var WebSocketServer = require("ws").Server;
 
-var socket = new WebSocketServer({port:(process.env.PORT || 8080)});
+var the_port = process.env.PORT || 8080;
+var socket = new WebSocketServer({port:the_port});
 
-console.log( "PORT(" + process.env.PORT.toString() +")" );
+//console.log( "-- PORT(" + the_port +")" );
 
 socket.on('connection', function(connection) {
-
 	var client = undefined;
-
-	if (process.env.REDISTOGO_URL) {
+	console.log("adfasdf");
+	if ((typeof process !== 'undefined') &&  process.env.REDISTOGO_URL) {
 		var r = require("url").parse(process.env.REDISTOGO_URL);
 		client = require("redis").createClient(r.port, r.hostname);
 		client.auth(r.auth.split(":")[1]);
@@ -23,12 +23,10 @@ socket.on('connection', function(connection) {
 		client = require("redis").createClient();
 	}
 	
-	client.set("socket-port",process.env.PORT.toString(),redis.print);
-	
+	client.set("socket-port",the_port,redis.print);	
 	console.log("We have a client" + this.clients);
 
 	var a = this.clients;
-	
 	client.subscribe("quote-added");
 
 	client.on("error",function(channel,count) {
@@ -37,14 +35,10 @@ socket.on('connection', function(connection) {
 	
 	client.on("message",function(channel,message) {
 		console.log(" REDIS Client subscribe quote added"+channel+message);
-		//io.sockets		
-		console.log("length: " + a.length);
-		
+		console.log("length: " + a.length);		
 		a.forEach(function(client) {
 			client.send(message);
 		});
-
-		
 	});
 	
 });
