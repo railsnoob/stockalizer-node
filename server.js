@@ -2,15 +2,29 @@
 
 var redis= require('redis');
 var fs = require('fs');
-var app = require("http").createServer(handler); 
+var app = require("http").createServer(handler);
+app.listen(80);
 
 var WebSocketServer = require("ws").Server;
-var socket = new WebSocketServer({port:8080});
 
+var socket = new WebSocketServer({port:(process.env.PORT || 8080)});
+
+console.log( "PORT(" + process.env.PORT.toString() +")" );
 
 socket.on('connection', function(connection) {
-	var client = redis.createClient(6379,"localhost");
 
+	var client = undefined;
+
+	if (process.env.REDISTOGO_URL) {
+		var r = require("url").parse(process.env.REDISTOGO_URL);
+		client = require("redis").createClient(r.port, r.hostname);
+		client.auth(r.auth.split(":")[1]);
+	} else {
+		client = require("redis").createClient();
+	}
+	
+	client.set("socket-port",process.env.PORT.toString(),redis.print);
+	
 	console.log("We have a client" + this.clients);
 
 	var a = this.clients;
