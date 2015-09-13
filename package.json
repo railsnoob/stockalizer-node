@@ -2,7 +2,7 @@
   "name": "stockalizer_node_server",
   "version": "0.0.0",
   "description": "The node server for stockalizer.",
-  "main": "app.js",
+  "main": "server.js",
   "dependencies": {
     "ws": "~0.8.0",
     "redis": "~1.0.0",
