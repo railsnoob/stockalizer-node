@@ -10,11 +10,10 @@ server.listen(the_port);
 
 var socket = new WebSocketServer({server:server});
 
-console.log( "-- PORT(" + the_port +")" );
+console.log( "Node WebSocketServer on Port(" + the_port +")" );
 
 socket.on('connection', function(connection) {
 	var client = undefined;
-	console.log("adfasdf");
 	
 	if ((typeof process !== 'undefined') &&  process.env.REDISTOGO_URL) {
 		var r = require("url").parse(process.env.REDISTOGO_URL);
@@ -25,18 +24,18 @@ socket.on('connection', function(connection) {
 	}
 	
 	client.set("socket-port",8080,redis.print);	
-	console.log("We have a client" + this.clients);
+	console.log("New client received. Total of " + this.clients.length+" clients");
 
 	var a = this.clients;
+	
 	client.subscribe("quote-added");
 
 	client.on("error",function(channel,count) {
-		console.log(" REDIS small Client DISconnected" + channel + count);
+		console.log(" REDIS Server Error" + channel + count);
 	});
 	
 	client.on("message",function(channel,message) {
-		console.log(" REDIS Client subscribe quote added"+channel+message);
-		console.log("length: " + a.length);		
+		console.log("Message recieved from redis.["+channel+"]["+message+"]");
 		a.forEach(function(client) {
 			client.send(message);
 		});
