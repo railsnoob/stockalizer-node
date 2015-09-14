@@ -12,6 +12,9 @@ var socket = new WebSocketServer({server:server});
 
 console.log( "Node WebSocketServer on Port(" + the_port +")" );
 
+// Start a heartbeat
+
+
 socket.on('connection', function(connection) {
 	var client = undefined;
 	
@@ -20,12 +23,12 @@ socket.on('connection', function(connection) {
 		client = require("redis").createClient(r.port, r.hostname);
 		client.auth(r.auth.split(":")[1]);
 	} else {
+		console.log("Creating redis client");
 		client = require("redis").createClient();
 	}
 	
 	client.set("socket-port",8080,redis.print);	
 	console.log("New client received. Total of " + this.clients.length+" clients");
-
 	var a = this.clients;
 	
 	client.subscribe("quote-added");
@@ -42,6 +45,18 @@ socket.on('connection', function(connection) {
 	});
 	
 });
+
+
+
+var heartbeatFunc = function() {
+	console.log("heartbeatFunc");
+	socket.clients.forEach(function(client) {
+		console.log("ping");
+		client.ping();
+	});
+};
+
+setInterval(heartbeatFunc,5000);
 
 // redis_client.on("message",function(msg) {
 // 		console.log(" REDIS Client subscribe quote added " + this.clients);
